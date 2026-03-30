@@ -1,5 +1,6 @@
 package com.reaksa.e_wingshop_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -36,9 +37,7 @@ public class Branch {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-//    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<Inventory> inventories;
-//
-//    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
-//    private List<Order> orders;
+    @JsonIgnore
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Inventory> inventories;
 }

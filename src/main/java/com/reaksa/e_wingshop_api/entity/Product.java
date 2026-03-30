@@ -1,5 +1,6 @@
 package com.reaksa.e_wingshop_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -53,9 +54,7 @@ public class Product {
     @Column(name = "updated_at", updatable = false)
     private LocalDateTime updatedAt;
 
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<Inventory> inventories;
-//
-//    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-//    private List<OrderItem> orderItems;
+    @JsonIgnore
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Inventory> inventories;
 }
