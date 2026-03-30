@@ -38,20 +38,20 @@ public class ProductController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('SUPERAMIN','MANAGER')")
+    @PreAuthorize("hasAnyRole('SUPERADMIN','MANAGER')")
     public ResponseEntity<Product> create(@Valid @RequestBody ProductRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(request));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('SUPERAMIN','MANAGER')")
+    @PreAuthorize("hasAnyRole('SUPERADMIN','MANAGER')")
     public ResponseEntity<Product> update(@PathVariable Long id,
                                           @Valid @RequestBody ProductRequest request) {
         return ResponseEntity.ok(productService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('SUPERAMIN')")
+    @PreAuthorize("hasRole('SUPERADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);
         return ResponseEntity.noContent().build();
