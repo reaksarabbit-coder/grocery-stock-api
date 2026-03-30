@@ -1,8 +1,17 @@
 package com.reaksa.e_wingshop_api.dto.response;
 
+import com.reaksa.e_wingshop_api.entity.Inventory;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class InventoryResponse {
     private Long      id;
     private Long      branchId;
@@ -18,28 +27,28 @@ public class InventoryResponse {
     private boolean   expired;
     private LocalDateTime updatedAt;
 
-//    public static InventoryResponse from(Inventory inv) {
-//        if (inv == null) return null;
-//
-//        Long daysUntil = null;
-//        if (inv.getExpiryDate() != null) {
-//            daysUntil = ChronoUnit.DAYS.between(LocalDate.now(), inv.getExpiryDate());
-//        }
-//
-//        return InventoryResponse.builder()
-//                .id(inv.getId())
-//                .branchId(inv.getBranch().getId())
-//                .branchName(inv.getBranch().getName())
-//                .productId(inv.getProduct().getId())
-//                .productName(inv.getProduct().getName())
-//                .productBarcode(inv.getProduct().getBarcode())
-//                .quantity(inv.getQuantity())
-//                .lowStockThreshold(inv.getLowStockThreshold())
-//                .expiryDate(inv.getExpiryDate())
-//                .daysUntilExpiry(daysUntil)
-//                .lowStock(inv.isLowStock())
-//                .expired(inv.isExpired())
-//                .updatedAt(inv.getUpdatedAt())
-//                .build();
-//    }
+    public static InventoryResponse from(Inventory inv) {
+        if (inv == null) return null;
+
+        Long daysUntil = null;
+        if (inv.getExpiryDate() != null) {
+            daysUntil = ChronoUnit.DAYS.between(LocalDate.now(), inv.getExpiryDate());
+        }
+
+        return InventoryResponse.builder()
+            .id(inv.getId())
+            .branchId(inv.getBranch().getId())
+            .branchName(inv.getBranch().getName())
+            .productId(inv.getProduct().getId())
+            .productName(inv.getProduct().getName())
+            .productBarcode(inv.getProduct().getBarcode())
+            .quantity(inv.getQuantity())
+            .lowStockThreshold(inv.getLowStockThreshold())
+            .expiryDate(inv.getExpiryDate())
+            .daysUntilExpiry(daysUntil)
+            .lowStock(inv.isLowStock())
+            .expired(inv.isExpired())
+            .updatedAt(inv.getUpdatedAt())
+            .build();
+    }
 }
