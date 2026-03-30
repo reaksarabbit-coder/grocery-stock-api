@@ -1,5 +1,6 @@
 package com.reaksa.e_wingshop_api.dto.response;
 
+import com.reaksa.e_wingshop_api.entity.Branch;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,16 +18,16 @@ public class BranchResponse {
     private String     phone;
     private LocalDateTime createdAt;
 
-//    public static BranchResponse from(Branch branch) {
-//        if (branch == null) return null;
-//        return BranchResponse.builder()
-//                .id(branch.getId())
-//                .name(branch.getName())
-//                .address(branch.getAddress())
-//                .latitude(branch.getLatitude())
-//                .longitude(branch.getLongitude())
-//                .phone(branch.getPhone())
-//                .createdAt(branch.getCreatedAt())
-//                .build();
-//    }
+    public static BranchResponse from(Branch branch) {
+        if (branch == null) return null;
+        return BranchResponse.builder()
+                .id(branch.getId())
+                .name(branch.getName())
+                .address(branch.getAddress())
+                .latitude(branch.getLatitude())
+                .longitude(branch.getLongitude())
+                .phone(branch.getPhone())
+                .createdAt(branch.getCreatedAt())
+                .build();
+    }
 }
