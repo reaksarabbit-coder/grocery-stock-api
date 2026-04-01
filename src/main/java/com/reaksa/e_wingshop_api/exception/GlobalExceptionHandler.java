@@ -79,9 +79,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleAll(Exception ex, WebRequest request) {
         log.error("Unhandled exception", ex);
+        String rootMessage = ex.getMessage();
+        if (ex.getCause() != null && ex.getCause().getMessage() != null) {
+            rootMessage = ex.getCause().getMessage();
+        }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(errorBody(HttpStatus.INTERNAL_SERVER_ERROR,
-                        "An unexpected error occurred", null, request));
+                        "An unexpected error occurred", rootMessage, request));
     }
 
     // ── Helper ────────────────────────────────────────────────────────
