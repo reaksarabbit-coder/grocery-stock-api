@@ -1,6 +1,7 @@
 package com.reaksa.e_wingshop_api.service;
 
 import com.reaksa.e_wingshop_api.dto.response.InventoryResponse;
+import com.reaksa.e_wingshop_api.dto.request.AddStockRequest;
 import com.reaksa.e_wingshop_api.dto.request.InventoryRequest;
 import com.reaksa.e_wingshop_api.entity.Branch;
 import com.reaksa.e_wingshop_api.entity.Inventory;
@@ -90,6 +91,36 @@ public class InventoryService {
         inv.setExpiryDate(request.getExpiryDate());
 
         return inventoryRepository.save(inv);
+    }
+
+    @Transactional
+    public Inventory addStock(AddStockRequest request) {
+        Branch branch = branchRepository.findById(request.getBranchId())
+                .orElseThrow(() -> new ResourceNotFoundException("Branch", request.getBranchId()));
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new ResourceNotFoundException("Product", request.getProductId()));
+
+        Inventory inv = inventoryRepository
+                .findByBranchIdAndProductId(request.getBranchId(), request.getProductId())
+                .orElseGet(() -> Inventory.builder()
+                        .branch(branch)
+                        .product(product)
+                        .quantity(0)
+                        .lowStockThreshold(10)
+                        .build());
+
+        inv.setQuantity(inv.getQuantity() + request.getQuantity());
+        if (request.getLowStockThreshold() != null) {
+            inv.setLowStockThreshold(request.getLowStockThreshold());
+        }
+        if (request.getExpiryDate() != null) {
+            inv.setExpiryDate(request.getExpiryDate());
+        }
+
+        Inventory saved = inventoryRepository.save(inv);
+        log.info("Stock added — branch={} product={} addQty={} newQty={}",
+                request.getBranchId(), request.getProductId(), request.getQuantity(), saved.getQuantity());
+        return saved;
     }
 
     /**

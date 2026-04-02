@@ -1,12 +1,17 @@
 package com.reaksa.e_wingshop_api.service;
 
 import com.reaksa.e_wingshop_api.dto.request.ProductRequest;
+import com.reaksa.e_wingshop_api.dto.request.ProductWithStockRequest;
 import com.reaksa.e_wingshop_api.dto.response.ProductResponse;
+import com.reaksa.e_wingshop_api.entity.Branch;
 import com.reaksa.e_wingshop_api.entity.Category;
+import com.reaksa.e_wingshop_api.entity.Inventory;
 import com.reaksa.e_wingshop_api.entity.Product;
 import com.reaksa.e_wingshop_api.exception.DuplicateResourceException;
 import com.reaksa.e_wingshop_api.exception.ResourceNotFoundException;
+import com.reaksa.e_wingshop_api.repository.BranchRepository;
 import com.reaksa.e_wingshop_api.repository.CategoryRepository;
+import com.reaksa.e_wingshop_api.repository.InventoryRepository;
 import com.reaksa.e_wingshop_api.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +26,8 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final BranchRepository branchRepository;
+    private final InventoryRepository inventoryRepository;
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> search(Long categoryId, String keyword, int page, int size) {
@@ -74,6 +81,44 @@ public class ProductService {
                 .build();
 
         return productRepository.save(product);
+    }
+
+    @Transactional
+    public Product createWithStock(ProductWithStockRequest request) {
+        if (request.getBarcode() != null
+                && productRepository.findByBarcode(request.getBarcode()).isPresent()) {
+            throw new DuplicateResourceException("Barcode already exists: " + request.getBarcode());
+        }
+
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category", request.getCategoryId()));
+
+        Branch branch = branchRepository.findById(request.getBranchId())
+                .orElseThrow(() -> new ResourceNotFoundException("Branch", request.getBranchId()));
+
+        Product product = Product.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .barcode(request.getBarcode())
+                .imageUrl(request.getImageUrl())
+                .category(category)
+                .costPrice(request.getCostPrice())
+                .sellingPrice(request.getSellingPrice())
+                .isActive(request.getIsActive() != null ? request.getIsActive() : true)
+                .build();
+
+        Product savedProduct = productRepository.save(product);
+
+        Inventory inventory = Inventory.builder()
+                .branch(branch)
+                .product(savedProduct)
+                .quantity(request.getQuantity())
+                .lowStockThreshold(request.getLowStockThreshold() != null ? request.getLowStockThreshold() : 10)
+                .expiryDate(request.getExpiryDate())
+                .build();
+
+        inventoryRepository.save(inventory);
+        return savedProduct;
     }
 
     @Transactional

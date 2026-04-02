@@ -1,6 +1,7 @@
 package com.reaksa.e_wingshop_api.controller;
 
 import com.reaksa.e_wingshop_api.dto.request.ProductRequest;
+import com.reaksa.e_wingshop_api.dto.request.ProductWithStockRequest;
 import com.reaksa.e_wingshop_api.dto.response.PageResponse;
 import com.reaksa.e_wingshop_api.dto.response.ProductResponse;
 import com.reaksa.e_wingshop_api.service.ProductService;
@@ -45,6 +46,13 @@ public class ProductController {
     public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(ProductResponse.from(productService.create(request)));
+    }
+
+    @PostMapping("/with-stock")
+    @PreAuthorize("hasAnyRole('SUPERADMIN','MANAGER')")
+    public ResponseEntity<ProductResponse> createWithStock(@Valid @RequestBody ProductWithStockRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ProductResponse.from(productService.createWithStock(request)));
     }
 
     @PutMapping("/{id}")

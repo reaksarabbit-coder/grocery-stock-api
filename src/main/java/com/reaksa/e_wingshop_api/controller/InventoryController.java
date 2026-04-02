@@ -1,5 +1,6 @@
 package com.reaksa.e_wingshop_api.controller;
 
+import com.reaksa.e_wingshop_api.dto.request.AddStockRequest;
 import com.reaksa.e_wingshop_api.dto.request.InventoryRequest;
 import com.reaksa.e_wingshop_api.dto.response.InventoryResponse;
 import com.reaksa.e_wingshop_api.dto.response.PageResponse;
@@ -36,7 +37,7 @@ public class InventoryController {
     public ResponseEntity<PageResponse<InventoryResponse>> getByBranch(
             @PathVariable Long branchId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "50") int size) {
+            @RequestParam(defaultValue = "20") int size) {
         Page<InventoryResponse> result = inventoryService.findByBranch(branchId, page, size)
                 .map(InventoryResponse::from);
         return ResponseEntity.ok(PageResponse.of(result));
@@ -46,6 +47,12 @@ public class InventoryController {
     public ResponseEntity<InventoryResponse> upsert(@Valid @RequestBody InventoryRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(InventoryResponse.from(inventoryService.upsert(request)));
+    }
+
+    @PostMapping("/add-stock")
+    public ResponseEntity<InventoryResponse> addStock(@Valid @RequestBody AddStockRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(InventoryResponse.from(inventoryService.addStock(request)));
     }
 
     @PatchMapping("/adjust")
